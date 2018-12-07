@@ -12,6 +12,13 @@ def main():
         sys.exit(2)
     
     HELP = """
+        This program tokenizes an input file respecting the following
+        format:
+            - .I : document's id
+            - .T : indicates start of document's title
+            - .W : indicates start of document's summary
+            - .K : indicates the start of the document's keywords
+
         options:
             -h --help : shows this help message
             -f --file : the path to the input file
