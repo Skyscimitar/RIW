@@ -19,4 +19,12 @@ Download the document corpus:
 
 > `pip install -r requirements.txt`
 
+- import nltk packages: after installing the nltk requirement, you will need to install the punkt library
+
+## Running the project
+
+- run the following command to see all available options:
+
+> `python run.py --h`
+
 

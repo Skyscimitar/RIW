@@ -9,4 +9,9 @@ pyvenv.cfg
 # miscellaneous
 .DS_Store
 
+# cache
+__pycache__
+
+# ide / editor
+.vscode/
 
