@@ -6,7 +6,7 @@ bin/
 lib/
 pyvenv.cfg
 
-# mac 
+# miscellaneous
 .DS_Store
 
 # cache
