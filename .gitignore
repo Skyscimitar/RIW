@@ -6,5 +6,12 @@ bin/
 lib/
 pyvenv.cfg
 
+# mac 
+.DS_Store
 
+# cache
+__pycache__
+
+# ide / editor
+.vscode/
 
