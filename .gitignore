@@ -6,5 +6,7 @@ bin/
 lib/
 pyvenv.cfg
 
+# miscellaneous
+.DS_Store
 
 
