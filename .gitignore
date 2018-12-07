@@ -1,0 +1,10 @@
+# ignore corpus
+cacm/
+
+# virtualenv
+bin/
+lib/
+pyvenv.cfg
+
+
+
