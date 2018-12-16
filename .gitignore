@@ -1,5 +1,6 @@
 # ignore corpus
 cacm/
+pa1-data/
 
 # virtualenv
 bin/

@@ -48,14 +48,23 @@ class DocumentParser:
     @staticmethod
     def tokenize(doc_list, common_words=None):
         tokens = {}
+        token_counts = []
         if common_words is not None:
             common_words = DocumentParser.read_common_words(common_words)
             for doc in doc_list:
                 tokens[doc.id] =  DocumentParser.remove_common_words(doc.tokenize(), common_words)
+                if len(token_counts) > 1:
+                    token_counts.append(token_counts[-1] + len(tokens[doc.id]))
+                else:
+                    token_counts.append(len(tokens[doc.id]))
         else:
             for doc in doc_list:
                 tokens[doc.id] = doc.tokenize()
-        return tokens
+                if len(token_counts)>1:
+                    token_counts.append(token_counts[-1] + len(tokens[doc.id]))
+                else:
+                    token_counts.append(len(tokens[doc.id]))
+        return tokens , token_counts
 
 
     @staticmethod
@@ -82,10 +91,12 @@ class DocumentParser:
     @staticmethod
     def calculate_vocabulary(tokens):
         vocab = {}
+        vocab_lengths = []
         for key in tokens.keys():
             for word in tokens[key]:
                 if word not in vocab.keys():
                     vocab[word] = 1
                 else:
                     vocab[word] +=1
-        return vocab
+            vocab_lengths.append(len(vocab.keys()))
+        return vocab , vocab_lengths
