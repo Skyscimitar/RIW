@@ -21,6 +21,8 @@ Download the document corpus:
 
 - import nltk packages: after installing the nltk requirement, you will need to install the punkt library
 
+- on macOS, you may have to `pip install PyQt5` to make it works.
+
 ## Running the project
 
 - run the following command to see all available options:
