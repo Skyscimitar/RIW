@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from cacm_part1.DocumentParser import DocumentParser
+from cacm_part1.InvertedIndex import InvertedIndex
 
 
 
@@ -94,6 +95,11 @@ def main():
     voc_million = k * (10**6)**b
     print("Vocabulaire 1million tokens: " + str(voc_million))
     plot_regression_line(token_counts, vocab_lengths, coefs)
+    
+    inverted_index = InvertedIndex.invert_index(tokens)
+    print(inverted_index)
+    
+    
     tokens = None
     token_counts = None
     vocab_lengths = None
