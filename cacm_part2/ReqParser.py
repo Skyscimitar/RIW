@@ -1,7 +1,23 @@
 import re
 
+# {
+#   'search': [
+#       {
+#           'search': 'macbook', 
+#           'is_not': True
+#       }, 
+#       {
+#           'search': 'dell', 
+#           'is_not': True
+#       }
+#   ], 
+#   'operation': 'AND', 
+#   'is_not': False
+# }
+
 def parse_query(q):
-    k = re.match(r"^(?P<not_1>NOT)? ?(?P<kw_1>\w+)( (?P<op>(AND|OR)) (?P<not_2>NOT)? ?(?P<kw_2>\w+))?$",q)
+    q = q.strip()
+    k = re.match(r"^(?P<not_1>NOT )? ?(?P<kw_1>\w+)( (?P<op>(AND|OR)) (?P<not_2>NOT )? ?(?P<kw_2>\w+))?$",q)
     search = []
     if k.group('kw_1') is None:
         raise ValueError("No keyword specified")
@@ -37,7 +53,9 @@ def parse_query(q):
 # (mackbook AND pro) OR (dell AND xps)
 # macbook AND pro AND (13 OR 15)
 
-print(parse_query("NOT macbook OR NOT dell"))
+
+if __name__ == "__main__":
+    print(parse_query("NOT macbook AND NOT dell"))
 
 def test_token_alone():
     assert parse_query("mackbook") == {
