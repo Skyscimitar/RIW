@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from cacm_part1.DocumentParser import DocumentParser
+from cacm_part1.InvertedIndex import InvertedIndex
+from cacm_part2.BinarySearch import BinarySearch
 
 
 
@@ -86,14 +88,25 @@ def main():
         vocab_lengths[i] = math.log10(vocab_lengths[i])
     token_counts = np.asarray(token_counts)
     vocab_lengths = np.asarray(vocab_lengths)
-    coefs = estimate_coef(token_counts, vocab_lengths)
-    print(coefs)
-    k = 10**coefs[0]
-    b = coefs[1]
-    print("k= " + str(10**coefs[0]) + " b= " + str(coefs[1]))
-    voc_million = k * (10**6)**b
-    print("Vocabulaire 1million tokens: " + str(voc_million))
-    plot_regression_line(token_counts, vocab_lengths, coefs)
+    # # plot regression line
+    # coefs = estimate_coef(token_counts, vocab_lengths)
+    # print (len(tokens))
+    # print(coefs)
+    # k = 10**coefs[0]
+    # b = coefs[1]
+    # print("k= " + str(10**coefs[0]) + " b= " + str(coefs[1]))
+    # voc_million = k * (10**6)**b
+    # print("Vocabulaire 1million tokens: " + str(voc_million))
+    # plot_regression_line(token_counts, vocab_lengths, coefs)
+    doc_ids = []
+    for doc in doc_list:
+        doc_ids.append(doc.id)
+    inverted_index = InvertedIndex.invert_index(tokens)
+    res = BinarySearch("computer OR network", inverted_index, doc_ids)
+    print (res)
+    # print(inverted_index)
+    
+    
     tokens = None
     token_counts = None
     vocab_lengths = None
