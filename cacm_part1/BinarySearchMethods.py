@@ -1,6 +1,6 @@
 
 
-class BinarySearch:
+class BinarySearchMethods:
 
     @staticmethod
     def resolve_and(l1, l2):
@@ -39,7 +39,7 @@ class BinarySearch:
     @staticmethod
     def resolve_not(l, doc_ids):
         output = []
-        while len(l) > 0:
+        while len(l) > 0 and len(doc_ids) > 0:
             if l[0] == doc_ids[0]:
                 l = l[1:]
                 doc_ids = doc_ids[1:]
