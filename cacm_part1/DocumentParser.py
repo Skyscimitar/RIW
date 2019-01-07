@@ -4,6 +4,8 @@ class DocumentParser:
 
     @staticmethod
     def parse_entry_file(filename):
+        """This function parses the entry file considering the different tokens."""
+
         try:
             with open(filename, 'r' ) as f:
                 current_token = ''
@@ -47,6 +49,8 @@ class DocumentParser:
 
     @staticmethod
     def tokenize(doc_list, common_words=None):
+        """This function establishes the list of tokens for the vocabulary."""
+
         tokens = {}
         token_counts = []
         if common_words is not None:
@@ -69,6 +73,8 @@ class DocumentParser:
 
     @staticmethod
     def read_common_words(filename):
+        """This function lists all the common words to be removed from the dictionnary."""
+
         common_words = []
         try:
             with open(filename, 'r') as f:
@@ -81,6 +87,8 @@ class DocumentParser:
 
     @staticmethod
     def remove_common_words(tokens, common_words):
+        """This function removes the common words from the dictionnary."""
+
         output = []
         for word in tokens:
             if word.lower() not in common_words:
@@ -90,6 +98,11 @@ class DocumentParser:
     
     @staticmethod
     def calculate_vocabulary(tokens):
+        """This function creates a vocabulary from the dictionnary.
+        :return: vocab, a dictionnary of distinct words
+        :return: vocab_lengths, the number of occurence of each word in vocab
+        """
+
         vocab = {}
         vocab_lengths = []
         for key in tokens.keys():
