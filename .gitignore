@@ -13,7 +13,11 @@ venv/
 
 # cache
 __pycache__
+*/**/*.pyc
+*.pyc
 
 # ide / editor
 .vscode/
 
+# pytest
+pytest_cache/
