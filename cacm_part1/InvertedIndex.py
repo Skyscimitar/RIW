@@ -16,11 +16,13 @@ class InvertedIndex:
             for token in tokens[doc_id]:
 
                 if token not in inv_index:
-                    inv_index[token] = [doc_id]
+                    inv_index[token] = {doc_id:1}
                 
                 else:
                     if doc_id not in inv_index[token]:
-                        inv_index[token].append(doc_id)
-                        inv_index[token].sort()
+                        inv_index[token][doc_id] = 1
+                        # inv_index[token].sort()
+                    else:
+                        inv_index[token][doc_id] += 1
                         
         return inv_index
