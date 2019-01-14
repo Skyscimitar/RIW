@@ -1,7 +1,7 @@
 from .ReqParser import parse_query
 from cacm_part1.BinarySearchMethods import BinarySearchMethods
 
-def BinarySearch(query, invertedindex, doc_ids):
+def binarySearch(query, invertedindex, doc_ids):
     search = parse_query(query)
     print(search)
     doc_list = resolveTerm(search, invertedindex, doc_ids)
@@ -24,9 +24,13 @@ def resolveTerm(query, inverted_index, doc_ids):
             return resolveTerm(query["search"][0], inverted_index, doc_ids)
     else:
         # pas d'operation -> on cherche une liste de postings
-        print(query)
         if query["is_not"]:
-            return BinarySearchMethods.resolve_not(inverted_index[query["search"]], doc_ids)
-        return inverted_index[query["search"]]
+            res = list(inverted_index[query["search"]].keys())
+            res = [int(i) for i in res]
+            return BinarySearchMethods.resolve_not(res, doc_ids)
+        res = list(inverted_index[query["search"]].keys())
+        res = [int(i) for i in res]
+        return res
+
 
             
