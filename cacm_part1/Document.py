@@ -15,7 +15,7 @@ class Document:
 
 
     def tokenize(self):
-        # this tokenizer accepts a regex pattern as an input for a more accurat tokinisation
+        # this tokenizer accepts a regex pattern as an input for a more accurate tokenization
         tokenizer = RegexpTokenizer(self.pattern)
         tokens = []
         tokens += tokenizer.tokenize(self.title)
