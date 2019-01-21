@@ -8,6 +8,7 @@ import math
 from cacm_part1.DocumentParser import DocumentParser
 from cacm_part1.InvertedIndex import InvertedIndex
 from cacm_part2.BinarySearch import binarySearch
+from cacm_part1.VectorialModel import VectorialModel
 
 
 
@@ -101,10 +102,16 @@ def main():
         doc_ids.append(doc.id)
     
     inverted_index = InvertedIndex.invert_index(tokens)
-    res = binarySearch("network AND computer", inverted_index, doc_ids)
-    print(res)
+    # res = binarySearch("network AND computer", inverted_index, doc_ids)
+    # print(res)
     
-    
+    cleaned_q = VectorialModel.parse_query("computer science applied to networks")
+    posting = VectorialModel.posting_union(cleaned_q, inverted_index)
+    vectors = VectorialModel.doc_vectors(posting, cleaned_q, inverted_index)
+    cosines = VectorialModel.cosinus(cleaned_q, vectors)
+    vecmod_result = VectorialModel.search_result(cosines, posting)
+    print(vecmod_result[:10])
+
     tokens = None
     token_counts = None
     vocab_lengths = None

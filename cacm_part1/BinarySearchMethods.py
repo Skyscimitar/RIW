@@ -18,6 +18,7 @@ class BinarySearchMethods:
     
     @staticmethod
     def resolve_or(l1, l2):
+        print(l1)
         output = []
         while len(l1) > 0 and len(l2) > 0:
             if (l1[0] == l2[0]):
