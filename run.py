@@ -112,6 +112,18 @@ def main():
     vecmod_result = VectorialModel.search_result(cosines, posting)
     print(vecmod_result[:10])
 
+    docs = {}
+    common_words = DocumentParser.read_common_words()
+    for doc in doc_list:
+        docs[doc.id] = len(DocumentParser.remove_common_words(doc.tokenize(), common_words))
+
+
+    ponderated_vectors = VectorialModel.doc_vectors_ponderation(posting, cleaned_q, inverted_index, docs)
+    p_cosines = VectorialModel.cosinus(cleaned_q, ponderated_vectors)
+    p_vecmod_result = VectorialModel.search_result(p_cosines, posting)
+    print(p_vecmod_result[:10])
+    print(ponderated_vectors[posting.index(2900)])
+
     tokens = None
     token_counts = None
     vocab_lengths = None

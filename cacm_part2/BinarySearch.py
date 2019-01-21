@@ -3,7 +3,7 @@ from cacm_part1.BinarySearchMethods import BinarySearchMethods
 
 def binarySearch(query, invertedindex, doc_ids):
     search = parse_query(query)
-    print(search)
+    # print(search)
     doc_list = resolveTerm(search, invertedindex, doc_ids)
     return doc_list
 

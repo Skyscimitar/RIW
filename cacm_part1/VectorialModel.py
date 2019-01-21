@@ -14,7 +14,6 @@ class VectorialModel():
         #remove common_words from query
         tokenizer = RegexpTokenizer(r'\w+')
         tokens_q = tokenizer.tokenize(q)
-        print(tokens_q)
 
         cleaned_q = DocumentParser.remove_common_words(tokens_q, DocumentParser.read_common_words("cacm/common_words"))
         print(cleaned_q)
@@ -45,6 +44,30 @@ class VectorialModel():
             for doc in list(occurrences.keys()):
                 if int(doc) in posting:
                     vectors[posting.index(int(doc))][j] = 1
+        return vectors
+
+    
+    @staticmethod
+    def doc_vectors_ponderation(posting, cleaned_q, inv_index, docs): # docs = {doc.id : nb tokens du doc}
+        
+        num_docs = len(docs.keys())
+
+        vectors = np.zeros((len(posting), len(cleaned_q)))
+
+        idf_list = [np.log10(num_docs/len(inv_index[token].keys())) for token in cleaned_q]
+
+        for j in range(len(cleaned_q)):
+                    occurrences = inv_index[cleaned_q[j]]
+                    for doc in list(occurrences.keys()):
+                        if int(doc) in posting:
+                            tf = occurrences[doc]
+                            tf2 = occurrences[doc] / docs[doc]   #normalisé
+
+                            if tf2>0:
+                                vectors[posting.index(int(doc))][j] = tf2 * idf_list[j]
+                            else: 
+                                vectors[posting.index(int(doc))][j] = 0
+
         return vectors
 
     
