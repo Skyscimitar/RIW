@@ -59,13 +59,21 @@ def parse_query(q):
 def parenthetic_contents(string):
     """Generate parenthesized contents in string as pairs (level, contents)."""
     # https://gist.github.com/constructor-igor/5f881c32403e3f313e6f
-    stack = []
+    stack = [string]
+    still_open_bracket = 0
+    yield (0,string,0,len(string))
     for i, c in enumerate(string):
         if c == '(':
             stack.append(i)
+            still_open_bracket += 1
         elif c == ')' and stack:
             start = stack.pop()
+            still_open_bracket -= 1
+            if still_open_bracket < 0:
+                raise Exception("Syntax error in the query. (Too much opened brackets) pos : {}, query : {}".format(i,string))
             yield (len(stack), string[start + 1: i], start, i+1)
+    if still_open_bracket > 0:
+        raise Exception("Syntax error in the query. (Not closed bracket) pos : {}, query : {}".format(i,string))
 
 def evaluate_tok(s):
     a = re.split(r"NOT ", s, flags=re.IGNORECASE)
@@ -82,27 +90,35 @@ def add_tok(parsed_pointer, tok_to_add):
         "is_not": tok[1]
     })
 
+def recur_replace(parsed, search_dict):
+    if type(parsed) is list:
+        for i, search in enumerate(parsed):
+            if type(search["search"]) is str:
+                if search["search"] in search_dict:
+                    # search is $x
+                    search_dict[search["search"]]["is_not"] = parsed[i]["is_not"]
+                    parsed[i] = search_dict[search["search"]]
+            else:
+                recur_replace(search["search"], search_dict)
+
 def parse(query, debug=False):
     search_dict = {}
+    search_id = 1
     while True:
-        search_id = 1
         nested_par_list = list(parenthetic_contents(query))
-        cur_level = nested_par_list[0][0]
-        if cur_level == 0:
-            return parse_no_par(query)
-        for nested_par in range(nested_par_list):
-            search = parse_no_par(nested_par[1], debug)
-            identifier = "$"+str(search_id)
-            search_dict[identifier] = search
-            query = query[:nested_par[2]]
-            search_id += 1
-            if nested_par[0] != cur_level:
-                # we got to the next level, we need to revaluate
-                # the expression without the cur_level parenthesis
-                # which have been replace by $x
-                break
-        if cur_level == 0:
+        nested_par_list.sort(key=lambda x: x[0], reverse=True)
+        sub_query = nested_par_list[0]
+        search = parse_no_par(sub_query[1], debug)
+        if sub_query[0] == 0:
             break
+        identifier = "$"+str(search_id)
+        search_dict[identifier] = search
+        query = query[:sub_query[2]] + identifier + query[sub_query[3]:]
+        search_id += 1
+    final_parse = parse_no_par(query)
+    for _ in range(search_id-1):
+        recur_replace(final_parse["search"], search_dict)
+    return final_parse
 
 def parse_no_par(s, debug=False):
     if debug:
@@ -145,7 +161,7 @@ def parse_no_par(s, debug=False):
             tok = evaluate_tok(p_and[0])
             parsed = {
                 "search": tok[0],
-                "operation": "AND",
+                "operation": None,
                 "is_not": tok[1]
             }
         else:
@@ -155,19 +171,21 @@ def parse_no_par(s, debug=False):
                 "is_not": False
             }
             for p in p_and:
-                add_tok(parsed_pointer,p)
+                add_tok(parsed,p)
     if debug:
         print(parsed)
     return parsed
 
 if __name__ == "__main__":
-    parse("windows", debug=True)
-    parse("NOT windows", debug=True)
-    parse("NOT windows OR mac", debug=True)
-    parse("NOT windows OR mac AND linux", debug=True)
-    parse("NOT windows OR mac AND NOT linux", debug=True)
-    parse("NOT windows OR mac AND lamp AND NOT linux", debug=True)
-    parse("NOT windows OR mac AND lamp AND NOT linux", debug=True)
+    print(parse("linux AND NOT (windows OR NOT (linux AND mac)))"))
+    # parse("windows AND (mac OR NOT (windows AND linux))", debug=True)
+    # parse("windows", debug=True)
+    # parse("NOT windows", debug=True)
+    # parse("NOT windows OR mac", debug=True)
+    # parse("NOT windows OR mac AND linux", debug=True)
+    # parse("NOT windows OR mac AND NOT linux", debug=True)
+    # parse("NOT windows OR mac AND lamp AND NOT linux", debug=True)
+    # parse("NOT windows OR mac AND lamp AND NOT linux", debug=True)
 
 
 def test_token_alone():
