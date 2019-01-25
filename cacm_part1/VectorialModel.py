@@ -48,7 +48,7 @@ class VectorialModel():
 
     
     @staticmethod
-    def doc_vectors_ponderation(posting, cleaned_q, inv_index, docs): # docs = {doc.id : nb tokens du doc}
+    def doc_vectors_ponderation(posting, cleaned_q, inv_index, docs, normalized = True): # docs = {doc.id : nb tokens du doc}
         
         num_docs = len(docs.keys())
 
@@ -60,11 +60,13 @@ class VectorialModel():
                     occurrences = inv_index[cleaned_q[j]]
                     for doc in list(occurrences.keys()):
                         if int(doc) in posting:
-                            tf = occurrences[doc]
-                            tf2 = occurrences[doc] / docs[doc]   #normalisé
+                            tf_basic = occurrences[doc]
+                            tf_normalized = occurrences[doc] / docs[doc]   #normalisé
 
-                            if tf2>0:
-                                vectors[posting.index(int(doc))][j] = tf2 * idf_list[j]
+                            tf = tf_normalized if normalized else tf_basic
+
+                            if tf>0:
+                                vectors[posting.index(int(doc))][j] = tf * idf_list[j]
                             else: 
                                 vectors[posting.index(int(doc))][j] = 0
 
