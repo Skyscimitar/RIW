@@ -29,4 +29,7 @@ Download the document corpus:
 
 > `python run.py --h`
 
+## To quickly test the search engine's performance on the corpus, run the following command from the root directory:
+
+> `python run_all.py`
 
