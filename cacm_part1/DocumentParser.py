@@ -72,7 +72,7 @@ class DocumentParser:
 
 
     @staticmethod
-    def read_common_words(filename):
+    def read_common_words(filename = "cacm/common_words"):
         """This function lists all the common words to be removed from the dictionnary."""
 
         common_words = []

@@ -23,6 +23,6 @@ class InvertedIndex:
                         inv_index[token][doc_id] = 1
                         # inv_index[token].sort()
                     else:
-                        inv_index[token][doc_id] += 1
+                        inv_index[token][doc_id] += 1  # tf
                         
         return inv_index
