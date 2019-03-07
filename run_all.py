@@ -184,7 +184,7 @@ def test_accuracy_recall(doc_list, tokens, return_doc_count):
     for key in tqdm(list(test_rels.keys())):
         cleaned_query = VectorialModel.parse_query(test_queries[key])
         postings = VectorialModel.posting_union(cleaned_query, inverted_index)
-        vectors = VectorialModel.doc_vectors(postings, cleaned_query, inverted_index)
+        vectors = VectorialModel.doc_vectors_ponderation(postings, cleaned_query, inverted_index)
         cosines = VectorialModel.cosinus(cleaned_query, vectors)
         res = VectorialModel.search_result(cosines, postings)
         res = res[:return_doc_count]
@@ -211,12 +211,57 @@ def test_accuracy_recall(doc_list, tokens, return_doc_count):
     min_recall = np.min(recalls)
     max_recall = np.max(recalls)
     print("Recall results: Mean %.2f, Max %.2f, Min %.2f" % (mean_recall, max_recall, min_recall))
+    beta = mean_accuracy / mean_recall
+    alpha = 1 / (beta**2 + 1)
+    e_mesure = 1 - 1/(alpha/mean_accuracy + (1 - alpha)/mean_recall)
+    f_mesure = 1 - e_mesure
+    print("E-mesure: %.2f, F-Mesure: %.2f" % (e_mesure, f_mesure))
+
+
+
+def accuracy_recall_graph(doc_list, tokens):
+    inverted_index = InvertedIndex.invert_index(tokens)
+    test_queries = parse_query_text()
+    test_rels = parse_qrels()
+    accuracies = []
+    recalls = []
+    keys = list(test_rels.keys())
+    query = test_queries[keys[0]]
+    rels = test_rels[keys[0]]
+    cleaned_query = VectorialModel.parse_query(query)
+    postings = VectorialModel.posting_union(cleaned_query, inverted_index)
+    vectors = VectorialModel.doc_vectors(postings, cleaned_query, inverted_index)
+    cosines = VectorialModel.cosinus(cleaned_query, vectors)
+    res = VectorialModel.search_result(cosines, postings)
+    for i in range(1, 51):
+        temp_res = res[:i]
+        tp = 0
+        fn = 0
+        for doc in temp_res:
+            if str(doc) in rels:
+                tp+=1
+            else:
+                fn+=1
+        accuracy = tp / len(res)
+        recall = tp/(tp + fn)
+        accuracies.append(accuracy)
+        recalls.append(recall)
+    print(accuracies)
+    print(recalls)
+    x = np.linspace(1,50, 50)
+    plt.plot(x, accuracies, color="r")
+    plt.plot(x, recalls, color="b")
+    plt.show()
+
+
+
+
 
 
 
 
 def run_all(filename):
-    doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=True)
+    doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=False)
 
     # doc_ids = []
     # for doc in doc_list:
@@ -224,7 +269,8 @@ def run_all(filename):
 
     # binary_search_test(tokens, doc_ids)
     # vectorial_search_test(doc_list, tokens)
-    test_accuracy_recall(doc_list, tokens, 25)
+    # test_accuracy_recall(doc_list, tokens, 25)
+    accuracy_recall_graph(doc_list, tokens)
 
     return True
 

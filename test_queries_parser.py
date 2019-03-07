@@ -10,14 +10,15 @@ def parse_qrels():
     doc_rels = {}
     for rel in rels:
         doc_id, related_doc = rel[0], rel[1]
+        if pattern.match(doc_id):
+            doc_id = doc_id[1]
         if doc_id in doc_rels.keys():
             doc_rels[doc_id].append(related_doc)
         else:
-            if pattern.match(doc_id):
-                doc_id = doc_id[1]
             doc_rels[doc_id] = [related_doc]
     return doc_rels
 
+parse_qrels()
 
 def parse_query_text():
     queries = {}

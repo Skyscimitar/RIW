@@ -23,6 +23,7 @@ class Document:
         tokens += tokenizer.tokenize(self.title)
         tokens += tokenizer.tokenize(self.summary)
         tokens += tokenizer.tokenize(self.keywords)
+        tokens += tokenizer.tokenize(self.authors)
         for i, token in enumerate(tokens):
             tokens[i] = token.lower()
         return tokens
