@@ -61,9 +61,17 @@ class VectorialModel():
 
         vectors = np.zeros((len(posting), len(cleaned_q)))
 
-        idf_list = [np.log10(num_docs/len(inv_index[token].keys())) for token in cleaned_q]
+        idf_list = []
+        for token in cleaned_q:
+            if token in inv_index.keys():
+                idf_list.append(np.log10(num_docs/len(inv_index[token].keys())) )
+            else:
+                idf_list.append(0)
+
 
         for j in range(len(cleaned_q)):
+                    if not cleaned_q[j] in inv_index.keys():
+                        continue
                     occurrences = inv_index[cleaned_q[j]]
                     for doc in list(occurrences.keys()):
                         if int(doc) in posting:

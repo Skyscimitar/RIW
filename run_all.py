@@ -181,10 +181,14 @@ def test_accuracy_recall(doc_list, tokens, return_doc_count):
     test_rels = parse_qrels()
     accuracies = []
     recalls = []
+    docs = {}
+    common_words = DocumentParser.read_common_words()
+    for doc in doc_list:
+        docs[doc.id] = len(DocumentParser.remove_common_words(doc.tokenize(), common_words))
     for key in tqdm(list(test_rels.keys())):
         cleaned_query = VectorialModel.parse_query(test_queries[key])
         postings = VectorialModel.posting_union(cleaned_query, inverted_index)
-        vectors = VectorialModel.doc_vectors_ponderation(postings, cleaned_query, inverted_index)
+        vectors = VectorialModel.doc_vectors_ponderation(postings, cleaned_query, inverted_index, docs)
         cosines = VectorialModel.cosinus(cleaned_query, vectors)
         res = VectorialModel.search_result(cosines, postings)
         res = res[:return_doc_count]
@@ -269,8 +273,8 @@ def run_all(filename):
 
     # binary_search_test(tokens, doc_ids)
     # vectorial_search_test(doc_list, tokens)
-    # test_accuracy_recall(doc_list, tokens, 25)
-    accuracy_recall_graph(doc_list, tokens)
+    test_accuracy_recall(doc_list, tokens, 100)
+    # accuracy_recall_graph(doc_list, tokens)
 
     return True
 
