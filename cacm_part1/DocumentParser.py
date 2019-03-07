@@ -15,11 +15,16 @@ class DocumentParser:
                 title = ""
                 summary = ""
                 keywords = ""
+                authors = ""
                 for line in f:
                     # read the tokens to identify the next action to perform
                     if line[:2] == '.I':
                         if creating_document:
-                            doc = Document(doc_id, title, summary, keywords)
+                            title = title.strip()
+                            summary = summary.strip()
+                            keywords = keywords.strip()
+                            authors = authors.strip()
+                            doc = Document(doc_id, authors, title, summary, keywords)
                             doc_list.append(doc)
                         title = ""
                         summary = ""
@@ -32,15 +37,19 @@ class DocumentParser:
                         current_token = '.W'
                     elif line[:2] == '.K':
                         current_token = '.K'
+                    elif line[:2] == '.A':
+                        current_token = '.A'
                     elif line[0] == '.':
                         current_token = ""
                     else:
                         if current_token == '.T':
-                            title += line
+                            title += ' ' + line.strip()
                         elif current_token == '.W':
-                            summary += line
+                            summary += ' ' + line.strip()
                         elif current_token == '.K':
-                            keywords += line
+                            keywords = ' ' + line.strip()
+                        elif current_token == '.A':
+                            authors += line.strip().split(',')[0]
             return doc_list
 
         except IOError:

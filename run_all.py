@@ -11,6 +11,8 @@ from cacm_part1.InvertedIndex import InvertedIndex
 from cacm_part2.BinarySearch import binarySearch
 from cacm_part1.VectorialModel import VectorialModel
 from time import time
+from test_queries_parser import parse_qrels, parse_query_text
+from tqdm import tqdm
 
 def estimate_coef(x, y): 
     # number of observations/points 
@@ -62,9 +64,11 @@ def preprocessing(filename, display=False):
 
     # generate tokens from documents
     tokens, token_counts = DocumentParser.tokenize(doc_list, "cacm/common_words")
+    print("Tokens size: %i" % token_counts[-1])
 
     # generate vocabulary from tokens
     vocab, vocab_lengths = DocumentParser.calculate_vocabulary(tokens)
+    print("Vocabulary size: %i" % vocab_lengths[-1])
 
     for i in range(len(token_counts)):
         token_counts[i] = math.log10(token_counts[i])
@@ -171,15 +175,56 @@ def vectorial_search_test(doc_list, tokens):
     return True
 
 
+def test_accuracy_recall(doc_list, tokens, return_doc_count):
+    inverted_index = InvertedIndex.invert_index(tokens)
+    test_queries = parse_query_text()
+    test_rels = parse_qrels()
+    accuracies = []
+    recalls = []
+    for key in tqdm(list(test_rels.keys())):
+        cleaned_query = VectorialModel.parse_query(test_queries[key])
+        postings = VectorialModel.posting_union(cleaned_query, inverted_index)
+        vectors = VectorialModel.doc_vectors(postings, cleaned_query, inverted_index)
+        cosines = VectorialModel.cosinus(cleaned_query, vectors)
+        res = VectorialModel.search_result(cosines, postings)
+        res = res[:return_doc_count]
+        related_docs = test_rels[key]
+        tp = 0
+        fn = 0
+        for doc in res:
+            if str(doc) in related_docs:
+                tp+=1
+            else:
+                fn+=1
+        accuracy = tp / len(res)
+        recall = tp/(tp + fn)
+        accuracies.append(accuracy)
+        recalls.append(recall)
+    accuracies = np.asarray(accuracies)
+    recalls = np.asarray(recalls)
+    mean_accuracy = np.mean(accuracies)
+    min_accuracy = np.min(accuracies)
+    max_accuracy = np.max(accuracies)
+    print("Accuracy, recall tests for %i documents returned" % return_doc_count)
+    print("Accuracy results: Mean %.2f, Max %.2f, Min %.2f" % (mean_accuracy, max_accuracy, min_accuracy))
+    mean_recall = np.mean(recalls)
+    min_recall = np.min(recalls)
+    max_recall = np.max(recalls)
+    print("Recall results: Mean %.2f, Max %.2f, Min %.2f" % (mean_recall, max_recall, min_recall))
+
+
+
+
 def run_all(filename):
     doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=True)
 
-    doc_ids = []
-    for doc in doc_list:
-        doc_ids.append(doc.id)
+    # doc_ids = []
+    # for doc in doc_list:
+    #     doc_ids.append(doc.id)
 
-    binary_search_test(tokens, doc_ids)
-    vectorial_search_test(doc_list, tokens)
+    # binary_search_test(tokens, doc_ids)
+    # vectorial_search_test(doc_list, tokens)
+    test_accuracy_recall(doc_list, tokens, 25)
 
     return True
 
