@@ -33,3 +33,11 @@ Download the document corpus:
 
 > `python run_all.py`
 
+## Stanford collection
+
+To test with the stanford collection, start by running the preparation file:  
+> `python prepare_pa1.py`  
+
+This will load the documents, create an inverted index and serialize them. Once this is done, you can test the search using the main file run file for the stanford collection. Use the following command:
+> `run_pa1.py`
+
