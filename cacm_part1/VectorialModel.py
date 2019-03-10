@@ -16,7 +16,6 @@ class VectorialModel():
         tokens_q = tokenizer.tokenize(q)
 
         cleaned_q = DocumentParser.remove_common_words(tokens_q, DocumentParser.read_common_words("cacm/common_words"))
-        print(cleaned_q)
         
         return cleaned_q
 
@@ -25,7 +24,14 @@ class VectorialModel():
     def posting_union(cleaned_q, inv_index):
 
         # liste des listes de postings des mots de la query sans common words
-        or_lists = [[int(j) for j in list(inv_index[i].keys())] for i in cleaned_q]
+        or_lists = []
+        for i in cleaned_q:
+            if i in inv_index.keys():
+                temp_list = []
+                for j in list(inv_index[i].keys()):
+                    temp_list.append(int(j))
+                or_lists.append(temp_list)
+
 
         while len(or_lists)>1:
              or_lists[0] = BinarySearchMethods.resolve_or(or_lists[0], or_lists[1])
@@ -40,10 +46,11 @@ class VectorialModel():
         vectors = np.zeros((len(posting), len(cleaned_q)))
 
         for j in range(len(cleaned_q)):
-            occurrences = inv_index[cleaned_q[j]]
-            for doc in list(occurrences.keys()):
-                if int(doc) in posting:
-                    vectors[posting.index(int(doc))][j] = 1
+            if cleaned_q[j] in inv_index.keys():
+                occurrences = inv_index[cleaned_q[j]]
+                for doc in list(occurrences.keys()):
+                    if int(doc) in posting:
+                        vectors[posting.index(int(doc))][j] = 1
         return vectors
 
     
@@ -54,9 +61,17 @@ class VectorialModel():
 
         vectors = np.zeros((len(posting), len(cleaned_q)))
 
-        idf_list = [np.log10(num_docs/len(inv_index[token].keys())) for token in cleaned_q]
+        idf_list = []
+        for token in cleaned_q:
+            if token in inv_index.keys():
+                idf_list.append(np.log10(num_docs/len(inv_index[token].keys())) )
+            else:
+                idf_list.append(0)
+
 
         for j in range(len(cleaned_q)):
+                    if not cleaned_q[j] in inv_index.keys():
+                        continue
                     occurrences = inv_index[cleaned_q[j]]
                     for doc in list(occurrences.keys()):
                         if int(doc) in posting:

@@ -5,6 +5,9 @@ Construction d'un moteur de recherche
 Download the document corpus:  
 - http://ir.dcs.gla.ac.uk/resources/test_collections/cacm/
 
+Download the stanford corpus:
+- http://web.stanford.edu/class/cs276/pa/pa1-data.zip[http://web.stanford.edu/class/cs276/pa/pa1-data.zip]
+
 ## Project set up:
 
 - create a python3 virtualenvironment for the project
@@ -29,4 +32,15 @@ Download the document corpus:
 
 > `python run.py --h`
 
+## To quickly test the search engine's performance on the corpus, run the following command from the root directory:
+
+> `python run_all.py`
+
+## Stanford collection
+
+To test with the stanford collection, start by running the preparation file:  
+> `python prepare_pa1.py`  
+
+This will load the documents, create an inverted index and serialize them. Once this is done, you can test the search using the main file run file for the stanford collection. Use the following command:
+> `run_pa1.py`
 
