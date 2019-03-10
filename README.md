@@ -5,6 +5,9 @@ Construction d'un moteur de recherche
 Download the document corpus:  
 - http://ir.dcs.gla.ac.uk/resources/test_collections/cacm/
 
+Download the stanford corpus:
+- http://web.stanford.edu/class/cs276/pa/pa1-data.zip[http://web.stanford.edu/class/cs276/pa/pa1-data.zip]
+
 ## Project set up:
 
 - create a python3 virtualenvironment for the project
