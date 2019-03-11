@@ -2,12 +2,14 @@ import os
 from tqdm import tqdm
 import simplejson
 from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
 import sys
 import json
 
 class pa1Document(object):
 
-    pattern = r'\w+'
+    pattern = r"'?\w[\w']*(?:-\w+)?'?"
+    stopwords = set(stopwords.words('english'))
 
     def __init__(self, title=None, id=None, content=None):
         self.title = title
@@ -17,6 +19,7 @@ class pa1Document(object):
     def tokenize(self):
         tokenizer = RegexpTokenizer(self.pattern)
         self.content = tokenizer.tokenize(self.content)
+        self.content = [word for word in self.content if not word in self.stopwords]
     
 
     def __json__(self):
