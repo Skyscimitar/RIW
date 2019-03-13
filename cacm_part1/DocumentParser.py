@@ -39,8 +39,8 @@ class DocumentParser:
                         current_token = '.K'
                     elif line[:2] == '.A':
                         current_token = '.A'
-                    elif line[0] == '.':
-                        current_token = ""
+                    elif line[:2] == '.A' or line[:2] == '.X' or line[:2] == '.N' or line[:2] == '.B':
+                        current_token = ''
                     else:
                         if current_token == '.T':
                             title += ' ' + line.strip()
