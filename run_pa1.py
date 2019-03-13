@@ -3,9 +3,11 @@ from prepare_pa1 import pa1Document
 import json
 from time import time
 import sys
+from math import log
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+from copy import deepcopy
 
 
 # assistant functions for plotting
@@ -68,14 +70,21 @@ def load_documents():
 # calculate total number of tokens and vocabulary size for the collection
 def tokens_and_vocab(parsed_documents):
     tokens = []
-    for doc_id in parsed_documents.keys():
+    half_tokens = []
+    keys = list(parsed_documents.keys())
+    halfway = False
+    for i in range(len(keys)):
+        doc_id = keys[i]
         tokens += parsed_documents[doc_id].content
+        if not halfway:
+            if i > len(keys)/2:
+                half_tokens = deepcopy(tokens)
+                halfway = True
     vocab = set(tokens)
-    return tokens, vocab
+    half_vocab = set(half_tokens)
+    return tokens, vocab, half_tokens, half_vocab
 
 # TODO: implement function
-def tokens_and_vocab_lengths(parsed_documents):
-    return None, None
     
 
 
@@ -117,11 +126,15 @@ if __name__ == "__main__":
         # return details about the collection
         elif args[1] == "collection_details":
             parsed_documents = load_documents()
-            tokens, vocab = tokens_and_vocab(parsed_documents)
-            print(len(tokens))
-            print(len(vocab))
-            token_counts, vocab_lengths = tokens_and_vocab_lengths(parsed_documents)
-            print(token_counts, vocab_lengths)
+            tokens, vocab, htokens, hvocab = tokens_and_vocab(parsed_documents)
+            print("Tokens : %i, vocab length: %i" % (len(tokens), len(vocab)))
+            print("Half toknes: %i, half vocab length: %i" % (len(htokens), len(hvocab)))
+            b = log(float(len(vocab)/len(hvocab)))/log(len(tokens)/len(htokens))
+            k = len(vocab)/pow(len(tokens), b)
+            print("k: %.2f, b: %.2f" % (k, b))
+            voc_million = voc_million = k * (10**6)**b
+            print("Vocabulary for 1 million tokens: %.2f" % voc_million)
+            
         
         # return help
         else:
