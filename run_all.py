@@ -78,15 +78,18 @@ def preprocessing(filename, display=False):
     token_counts = np.asarray(token_counts)
     vocab_lengths = np.asarray(vocab_lengths)
 
+    token_counts_half = token_counts[int(len(token_counts)/2)]
+    vocab_length_half = vocab_lengths[int(len(token_counts)/2)]
+
+    b = math.log(float(vocab_lengths[-1]/vocab_length_half))/math.log(token_counts[-1]/token_counts_half)
+    k = vocab_lengths[-1] / token_counts[-1] ** b
+    
+
     if display:
-        coefs = estimate_coef(token_counts, vocab_lengths)
-        print("Coefficients: " + str(coefs))
-        k = 10**coefs[0]
-        b = coefs[1]
-        print("k= " + str(10**coefs[0]) + " b= " + str(coefs[1]))
+        print("k= " + str(k) + " b= " + str(b))
         voc_million = k * (10**6)**b
         print("Vocabulaire 1million tokens: " + str(voc_million))
-        plot_regression_line(token_counts, vocab_lengths, coefs)
+        plot_regression_line(token_counts, vocab_lengths, (k,b))
     
     return doc_list, tokens, token_counts, vocab, vocab_lengths
 
@@ -265,7 +268,7 @@ def accuracy_recall_graph(doc_list, tokens):
 
 
 def run_all(filename):
-    doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=False)
+    doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=True)
 
     # doc_ids = []
     # for doc in doc_list:
@@ -273,7 +276,7 @@ def run_all(filename):
 
     # binary_search_test(tokens, doc_ids)
     # vectorial_search_test(doc_list, tokens)
-    test_accuracy_recall(doc_list, tokens, 100)
+    # test_accuracy_recall(doc_list, tokens, 100)
     # accuracy_recall_graph(doc_list, tokens)
 
     return True
