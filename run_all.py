@@ -150,6 +150,7 @@ def vectorial_search_test(doc_list, tokens):
 
     print("Searching using cosine measurement")
     start_time = time()
+    cleaned_query = VectorialModel.generate_query_vector(cleaned_query, inverted_index, len(doc_list))
     cosines = VectorialModel.cosinus(cleaned_query, vectors)
     res = VectorialModel.search_result(cosines, postings)
     end_time = time()
@@ -192,6 +193,7 @@ def test_accuracy_recall(doc_list, tokens, return_doc_count):
         cleaned_query = VectorialModel.parse_query(test_queries[key])
         postings = VectorialModel.posting_union(cleaned_query, inverted_index)
         vectors = VectorialModel.doc_vectors_ponderation(postings, cleaned_query, inverted_index, docs)
+        cleaned_query = VectorialModel.generate_query_vector(cleaned_query, inverted_index, len(doc_list))
         cosines = VectorialModel.cosinus(cleaned_query, vectors)
         res = VectorialModel.search_result(cosines, postings)
         res = res[:return_doc_count]
@@ -238,6 +240,7 @@ def accuracy_recall_graph(doc_list, tokens):
     cleaned_query = VectorialModel.parse_query(query)
     postings = VectorialModel.posting_union(cleaned_query, inverted_index)
     vectors = VectorialModel.doc_vectors(postings, cleaned_query, inverted_index)
+    cleaned_query = VectorialModel.generate_query_vector(cleaned_query, inverted_index, len(doc_list))
     cosines = VectorialModel.cosinus(cleaned_query, vectors)
     res = VectorialModel.search_result(cosines, postings)
     for i in range(1, 51):
@@ -268,7 +271,7 @@ def accuracy_recall_graph(doc_list, tokens):
 
 
 def run_all(filename):
-    doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=True)
+    doc_list, tokens, token_counts, vocab, vocab_lengths = preprocessing(filename, display=False)
 
     # doc_ids = []
     # for doc in doc_list:
@@ -276,7 +279,7 @@ def run_all(filename):
 
     # binary_search_test(tokens, doc_ids)
     # vectorial_search_test(doc_list, tokens)
-    # test_accuracy_recall(doc_list, tokens, 100)
+    test_accuracy_recall(doc_list, tokens, 100)
     # accuracy_recall_graph(doc_list, tokens)
 
     return True

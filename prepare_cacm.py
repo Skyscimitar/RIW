@@ -8,6 +8,7 @@ from cacm_part1.NewDocument import NewDocument as Document
 from test_queries_parser import parse_qrels, parse_query_text
 from cacm_part1.VectorialModel import VectorialModel
 from cacm_part1.InvertedIndex import InvertedIndex
+import matplotlib.pyplot as plt
 
 file = "cacm/cacm.all"
 common_words_file = "cacm/common_words"
@@ -86,6 +87,16 @@ def get_tokens_dict(docs):
     return tokens
 
 
+def calculate_term_frequencies(inverted_index):
+    frequencies = []
+    for token in inverted_index.keys():
+        count = 0
+        for doc_id in inverted_index[token].keys():
+            count += inverted_index[token][doc_id]
+        frequencies.append(count)
+    frequencies.sort()
+    return frequencies
+
 def test_accuracy_recall(documents, tokens, return_doc_count=10):
     inverted_index = InvertedIndex.invert_index(tokens)
     test_queries = parse_query_text()
@@ -99,7 +110,8 @@ def test_accuracy_recall(documents, tokens, return_doc_count=10):
         cleaned_query = VectorialModel.parse_query(test_queries[key])
         postings = VectorialModel.posting_union(cleaned_query, inverted_index)
         vectors = VectorialModel.doc_vectors_ponderation(postings, cleaned_query, inverted_index, docs)
-        cosines = VectorialModel.cosinus(cleaned_query, vectors)
+        query_vector = VectorialModel.generate_query_vector(cleaned_query, inverted_index, len(documents.keys()))
+        cosines = VectorialModel.cosinus(query_vector, vectors)
         res = VectorialModel.search_result(cosines, postings)
         res = res[:return_doc_count]
         related_docs = test_rels[key]
@@ -114,6 +126,12 @@ def test_accuracy_recall(documents, tokens, return_doc_count=10):
         recall = tp/(tp + fn)
         accuracies.append(accuracy)
         recalls.append(recall)
+        # the following lines are used to test that the documents returned
+        # are indeed relevant.
+        # print(test_queries[key])
+        # for doc_id in res[:5]:
+        #     print(documents[str(doc_id)].title)
+        # break
     accuracies = np.asarray(accuracies)
     recalls = np.asarray(recalls)
     mean_accuracy = np.mean(accuracies)
@@ -145,4 +163,14 @@ if __name__ == "__main__":
     voc_million = voc_million = k * (10**6)**b
     print("Vocabulary for 1 million tokens: %.2f" % voc_million)
     tokens = get_tokens_dict(docs)
+    inverted_index = InvertedIndex.invert_index(tokens)
+    frequencies = calculate_term_frequencies(inverted_index)
+    log_freqs = [log(freq) for freq in frequencies]
+    ranks = [i for i in range(1, len(frequencies) + 1)]
+    log_ranks = [log(rank) for rank in ranks]
+    frequencies = frequencies[::-1]
+    # plt.plot(ranks[:200], frequencies[:200])
+    # plt.show()
+    # plt.plot(log_ranks[:200], log_freqs[:200])
+    # plt.show()
     test_accuracy_recall(docs, tokens, 50)

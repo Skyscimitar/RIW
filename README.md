@@ -1,12 +1,14 @@
 # RIW
 Projet de recherche d'information
-Construction d'un moteur de recherche
+Building a search engine on the cacm and cs276 corpuses in python.
 
 Download the document corpus:  
 - http://ir.dcs.gla.ac.uk/resources/test_collections/cacm/
 
 Download the stanford corpus:
 - http://web.stanford.edu/class/cs276/pa/pa1-data.zip[http://web.stanford.edu/class/cs276/pa/pa1-data.zip]
+
+A brief report on the searh engine's performances can be found in the pdf file.
 
 ## Project set up:
 
@@ -35,6 +37,12 @@ Download the stanford corpus:
 ## To quickly test the search engine's performance on the corpus, run the following command from the root directory:
 
 > `python run_all.py`
+
+To get more detailed information on the cacm collection, pleasu run the following file:
+
+> `python prepare_cacm.py`
+
+This will show you all the relevant measures very simply.
 
 ## Stanford collection
 

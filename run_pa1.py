@@ -67,6 +67,18 @@ def load_documents():
     return parsed_documents
 
 
+
+def calculate_term_frequencies(inverted_index):
+    frequencies = []
+    for token in inverted_index.keys():
+        count = 0
+        for doc_id in inverted_index[token].keys():
+            count += inverted_index[token][doc_id]
+        frequencies.append(count)
+    frequencies.sort()
+    return frequencies
+
+
 # calculate total number of tokens and vocabulary size for the collection
 def tokens_and_vocab(parsed_documents):
     tokens = []
@@ -84,10 +96,6 @@ def tokens_and_vocab(parsed_documents):
     half_vocab = set(half_tokens)
     return tokens, vocab, half_tokens, half_vocab
 
-# TODO: implement function
-    
-
-
 # test vectorial search method
 def test_vec_search(inverted_index, parsed_documents):
 
@@ -101,6 +109,7 @@ def test_vec_search(inverted_index, parsed_documents):
 
     print("Searching using cosine measurement")
     start_time = time()
+    cleaned_query = VectorialModel.generate_query_vector(cleaned_query, inverted_index, len(parsed_documents.keys()))
     cosines = VectorialModel.cosinus(cleaned_query, vectors)
     res = VectorialModel.search_result(cosines, postings)
     end_time = time()
@@ -134,6 +143,16 @@ if __name__ == "__main__":
             print("k: %.2f, b: %.2f" % (k, b))
             voc_million = voc_million = k * (10**6)**b
             print("Vocabulary for 1 million tokens: %.2f" % voc_million)
+            inverted_index = load_index()
+            frequencies = calculate_term_frequencies(inverted_index)
+            frequencies = frequencies[::-1]
+            log_freqs = [log(freq) for freq in frequencies]
+            ranks = [i for i in range(1, len(frequencies) + 1)]
+            log_ranks = [log(rank) for rank in ranks]
+            plt.plot(ranks[:200], frequencies[:200])
+            plt.show()
+            plt.plot(log_ranks[:200], log_freqs[:200])
+            plt.show()
             
         
         # return help
