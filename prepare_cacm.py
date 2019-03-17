@@ -128,10 +128,10 @@ def test_accuracy_recall(documents, tokens, return_doc_count=10):
         recalls.append(recall)
         # the following lines are used to test that the documents returned
         # are indeed relevant.
-        # print(test_queries[key])
-        # for doc_id in res[:5]:
-        #     print(documents[str(doc_id)].title)
-        # break
+        print(test_queries[key])
+        for doc_id in res[:10]:
+            print(documents[str(doc_id)].title)
+        break
     accuracies = np.asarray(accuracies)
     recalls = np.asarray(recalls)
     mean_accuracy = np.mean(accuracies)

@@ -42,7 +42,6 @@ class VectorialModel():
              or_lists[0] = BinarySearchMethods.resolve_or(or_lists[0], or_lists[1])
              or_lists.pop(1)
         posting = or_lists[0]
-
         return posting
 
 
